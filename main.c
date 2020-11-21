@@ -10,6 +10,101 @@
 typedef char riga[MAX_LENGTH_VERSO];
 typedef riga versi[MAX_NUM_VERSI];
 
+void printEsito(char*, int);
+int checkLunghezza(char*, char*);
+void setValue(int, int, int *, int *);
+int checkRima(char*, char*);
+int cesura(char*, char*);
+void findVowels(char* , char* , char []);
+int checkAssonanza(char [], char []);
+int checkAllitterazione(char[], int );
+
+
+int main(int argc, char* argv[]) {
+
+    versi poesia;
+    int i;
+    int comando;
+    int verso1, verso2;
+    int esito;
+    char allitt;
+    FILE* database;
+    char newString[MAX_LENGTH_VERSO];
+    char tempString[MAX_LENGTH_VERSO];
+
+    printf("\n Inserisci poema: ");
+    for (i = 0; i < MAX_NUM_VERSI; i++)
+        scanf("%s", poesia[i]);
+
+    printf("\n Cosa vuoi fare?");
+    scanf("%d",&comando);
+    while (comando != 8) {
+        if (comando == 1) {
+            scanf("%d",&verso1);
+            scanf("%d",&verso2);
+            esito = checkRima(poesia[verso1], poesia[verso2]);
+            printEsito("Rima", esito);
+        }
+        else if (comando == 2) { //cercare nel db verso in rima con quello dato
+            scanf("%d",&verso1);
+            database = fopen("futuribili.txt", "r");
+            esito = 0;
+            while ((database) && (esito == 0)) {
+                fgets(newString, MAX_LENGTH_VERSO, database);
+                esito = checkRima(newString, poesia[verso1]);
+            }
+            if (esito == 1)
+                printf("Ho trovato la stringa %s", newString);
+
+            else
+                printf("\n Nessuna stringa trovata");
+        }
+        else if (comando == 3) { //cercare verso nel database cui sia possibile applicare una cesura
+            database = fopen("futuribili.txt", "r");
+            esito = 0;
+            while ((database) && (esito == 0)) {
+                fgets(newString, MAX_LENGTH_VERSO, database);
+                esito = cesura(newString, tempString);
+            }
+            if (esito == 1)
+                printf("Ho trovato la stringa %s", newString);
+            else
+                printf("\n Nessuna stringa trovata");
+        }
+        else if (comando == 4) {
+            scanf("%d",&verso1);
+            scanf("%d",&verso2);
+            esito = checkAssonanza(poesia[verso1], poesia[verso2]);
+            printEsito("Assonanza", esito);
+        }
+        else if (comando == 5) { //verso nel db che abbia assonanza con quello dato
+            database = fopen("futuribili.txt", "r");
+            scanf("%d",&verso1);
+            esito = 0;
+            while ((database) && (esito == 0)) {
+                fgets(newString, MAX_LENGTH_VERSO, database);
+                esito = checkAssonanza(newString, poesia[verso1]);
+            }
+            if (esito == 1)
+                printf("Ho trovato la stringa %s", newString);
+            
+            else
+                printf("\n Nessuna stringa trovata");
+
+        }
+        else if (comando == 6) {
+            scanf("%d",&verso1);
+            esito = checkAllitterazione(poesia[verso1], MAX_LENGTH_VERSO);
+            printEsito("Allitterazione", esito);
+        }
+        else if (comando ==7) //verso nel db con allitterazione con lettera nuova
+            scanf("%c",&allitt);
+
+        scanf("%d",&comando);
+    }
+
+}
+
 void printEsito(char* type, int esito) {
     if (esito == 1)
         printf("\n %s ok", type);
@@ -27,9 +122,9 @@ int checkLunghezza(char* s1, char* s2) {
     return 0;
 }
 
-void setValue(int length1, int length2, int * value1, int* value2) {
+void setValue(int length1, int length2, int * value1, int * value2) {
 
-    if ( length1 >= RIMA)
+    if (length1 >= RIMA)
         *value1 = length1 - RIMA;
     else
         *value1 = 0;
@@ -146,92 +241,6 @@ int checkAssonanza(char s1[], char s2[]) {
 }*/
 
 int checkAllitterazione(char s[], int dim) { //non mi viene in mente senza liste dinamiche, unica cosa mappare caratteri
-                                             //su array di 21 posizioni
+    //su array di 21 posizioni
 
 }
-
-int main(int argc, char* argv[]) {
-
-    versi poesia;
-    int i;
-    int comando;
-    int verso1, verso2;
-    int esito;
-    char allitt;
-    FILE* database;
-    char newString[MAX_LENGTH_VERSO];
-    char tempString[MAX_LENGTH_VERSO];
-
-    printf("\n Inserisci poema: ");
-    for (i = 0; i < MAX_NUM_VERSI; i++)
-        scanf("%s", poesia[i]);
-
-    printf("\n Cosa vuoi fare?");
-    scanf("%d",&comando);
-    while (comando != 8) {
-        if (comando == 1) {
-            scanf("%d",&verso1);
-            scanf("%d",&verso2);
-            esito = checkRima(poesia[verso1], poesia[verso2]);
-            printEsito("Rima", esito);
-        }
-        else if (comando == 2) { //cercare nel db verso in rima con quello dato
-            scanf("%d",&verso1);
-            database = fopen("futuribili.txt", "r");
-            esito = 0;
-            while ((database) && (esito == 0)) {
-                fgets(newString, MAX_LENGTH_VERSO, database);
-                esito = checkRima(newString, poesia[verso1]);
-            }
-            if (esito == 1)
-                printf("Ho trovato la stringa %s", newString);
-
-            else
-                printf("\n Nessuna stringa trovata");
-        }
-        else if (comando == 3) { //cercare verso nel database cui sia possibile applicare una cesura
-            database = fopen("futuribili.txt", "r");
-            esito = 0;
-            while ((database) && (esito == 0)) {
-                fgets(newString, MAX_LENGTH_VERSO, database);
-                esito = cesura(newString, tempString);
-            }
-            if (esito == 1)
-                printf("Ho trovato la stringa %s", newString);
-            else
-                printf("\n Nessuna stringa trovata");
-        }
-        else if (comando == 4) {
-            scanf("%d",&verso1);
-            scanf("%d",&verso2);
-            esito = checkAssonanza(poesia[verso1], poesia[verso2]);
-            printEsito("Assonanza", esito);
-        }
-        else if (comando == 5) { //verso nel db che abbia assonanza con quello dato
-            database = fopen("futuribili.txt", "r");
-            scanf("%d",&verso1);
-            esito = 0;
-            while ((database) && (esito == 0)) {
-                fgets(newString, MAX_LENGTH_VERSO, database);
-                esito = checkAssonanza(newString, poesia[verso1]);
-            }
-            if (esito == 1)
-                printf("Ho trovato la stringa %s", newString);
-            
-            else
-                printf("\n Nessuna stringa trovata");
-
-        }
-        else if (comando == 6) {
-            scanf("%d",&verso1);
-            esito = checkAllitterazione(poesia[verso1], MAX_LENGTH_VERSO);
-            printEsito("Allitterazione", esito);
-        }
-        else if (comando ==7) //verso nel db con allitterazione con lettera nuova
-            scanf("%c",&allitt);
-
-        scanf("%d",&comando);
-    }
-
-}
-
